@@ -52,6 +52,7 @@ public class ServerTCP {
 	Socket client = null;
         String data = null;
 
+	String clientAddress=null;
 	int numPlayers = 0;	
 
 	while(numPlayers <3){
@@ -66,18 +67,18 @@ public class ServerTCP {
 	
 		
         //Socket client = this.server.accept();
-        String clientAddress = client.getInetAddress().getHostAddress();
+       clientAddress = client.getInetAddress().getHostAddress();
 	//String peerName = client.getpeername();
 	// int portName = client.getInetAddress().getPort();
         System.out.println("\r\nNew connection from player" + numPlayers + " (" + clientAddress  + ")");
       // System.out.println("port name " +portName); 
        }
-//	 BufferedReader in = new BufferedReader(
-  //              new InputStreamReader(client.getInputStream()));  
+	 BufferedReader in = new BufferedReader(
+              new InputStreamReader(client.getInputStream()));  
         
-       // while ( (data = in.readLine()) != null ) {
-         //   System.out.println("\r\nMessage from " + clientAddress + ": " + data);
-       // }
+	 while ( (data = in.readLine()) != null ) {
+           System.out.println("\r\nMessage from " + clientAddress + ": " + data);
+       }
     }
     
     public InetAddress getSocketAddress() {
