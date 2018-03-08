@@ -1,3 +1,4 @@
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +13,7 @@ public class ClientTCP {
     private Socket socket;
     private Scanner scanner;
     
-	public static void main(String args[]) throws Exception{
+	public static void main(String[] args) throws Exception{
 			    
         ClientTCP client = new ClientTCP(
                 InetAddress.getByName(args[0]), 
