@@ -15,6 +15,10 @@ public class EchoThread extends Thread{
 		this.socket=clientSocket;
 	}
 
+	public Socket getSocket(){
+		return socket;				
+	}
+
 	public void run(){
 	InputStream inp = null;
 	BufferedReader brinp = null;
@@ -37,8 +41,11 @@ public class EchoThread extends Thread{
 				return;
 			}
 			else{
+				if(!line.equals(null)){
+				System.out.println("this is what the thread said: " + line);
 				out.writeBytes(line + "\n\r");
 				out.flush();
+				}
 			}
 		}catch(IOException e){
 		e.printStackTrace();

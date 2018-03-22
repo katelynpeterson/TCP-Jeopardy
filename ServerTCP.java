@@ -6,6 +6,7 @@
 	import java.net.ServerSocket;
 	import java.net.Socket;
 	import java.net.InetAddress;
+	import java.io.PrintWriter;
 
 public class ServerTCP {
 	
@@ -21,26 +22,8 @@ public class ServerTCP {
         
         app.listen();
         
-	//A new Service registered with the 1286 port
-	/*ServerSocket ss = new ServerSocket(1286);
-	
-	//Accept the connection request made with the server socket
-	Socket s = ss.accept();
-	
-	//Establish the output stream from the socket connection
-	OutputStream socketOutStream = s.getOutputStream();
-	DataOutputStream socketDOS = new DataOutputStream(socketOutStream);
-	
-	//Communicate with the socket data stream with a message
-	socketDOS.writeUTF("Hello World!");
-	
-	//CleanUp
-	socketDOS.close();
-	socketOutStream.close();
-	s.close();
-	ss.close();*/
-		
 	}
+
     public ServerTCP(String ipAddress) throws IOException {
         if (ipAddress != null && !ipAddress.isEmpty()) 
           this.server = new ServerSocket(0, 1, InetAddress.getByName(ipAddress));
@@ -51,18 +34,21 @@ public class ServerTCP {
     protected void listen() throws IOException {
 	Socket client = null;
         String data = null;
-
+	EchoThread [] playerArray = new EchoThread[3];
 	String clientAddress=null;
 	int numPlayers = 0;	
 
-	while(numPlayers <3){
+	while(numPlayers <1){
 		try{
 		client = this.server.accept();
 		}catch(IOException e){
 		System.out.println("IO Error " + e);
 		}
+		
+		playerArray[numPlayers] = new EchoThread(client);
+		playerArray[numPlayers].start();
 
-		new EchoThread(client).start();
+		System.out.println("socket of player" + numPlayers + " : " + playerArray[numPlayers].getSocket());
 		numPlayers +=1;
 	
 		
@@ -73,12 +59,30 @@ public class ServerTCP {
         System.out.println("\r\nNew connection from player" + numPlayers + " (" + clientAddress  + ")");
       // System.out.println("port name " +portName); 
        }
-	 BufferedReader in = new BufferedReader(
-              new InputStreamReader(client.getInputStream()));  
+	System.out.println("We left while loop 1");
+
+	String line = "Ready to play!";
+	DataOutputStream out;
+
+	for(int i =0; i< numPlayers; i++){
+		System.out.println("in the for loop" + line);
+
+		Socket socket = playerArray[i].getSocket();
+		System.out.println("this is the socket " +socket);
+		out = new DataOutputStream(socket.getOutputStream());	
+		out.writeBytes(line + "\n\r");
+		out.flush();
+	}
+	
+	System.out.println("After the for loop");
+	
+	//EchoThread thread = new EchoThread(this.socket);
+	/* BufferedReader in = new BufferedReader(
+              new InputStreamReader(server.getInputStream()));  
         
 	 while ( (data = in.readLine()) != null ) {
-           System.out.println("\r\nMessage from " + clientAddress + ": " + data);
-       }
+           System.out.println("\r\nMessage from the Server: " + data);
+       }*/
     }
     
     public InetAddress getSocketAddress() {

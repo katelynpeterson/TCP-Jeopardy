@@ -51,6 +51,10 @@ public class ClientTCP {
     
     private void start() throws IOException {
         String input;
+
+	EchoThread thread = new EchoThread(this.socket);
+	thread.start();
+
         while (true) {
             input = scanner.nextLine();
             PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true);
