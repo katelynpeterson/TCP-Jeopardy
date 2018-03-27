@@ -19,16 +19,20 @@ public class ClientTCP implements Runnable{
     Thread respondThread;
     
 	public static void main(String[] args) throws Exception{
-			    
+	//Start the client and pass the Server's IP and port		    
         ClientTCP client = new ClientTCP(
         InetAddress.getByName(args[0]), 
         Integer.parseInt(args[1]));
         
+	//Print out that we successfully connected to server
         System.out.println("\r\nConnected to Server: " + client.socket.getInetAddress());
-        client.listenThread.start();
+        //start threads
+	client.listenThread.start();
         client.respondThread.start();      
 	}
 	
+	//Constructor of ClientTCP
+	//Create objects
     private ClientTCP(InetAddress serverAddress, int serverPort) throws Exception {
         this.socket = new Socket(serverAddress, serverPort);
         this.scanner = new Scanner(System.in);
@@ -36,6 +40,7 @@ public class ClientTCP implements Runnable{
         respondThread = new Thread();
     }
     
+	//Method for the listening thread
     public void listen() {
     	String output;
     	try {
@@ -54,11 +59,12 @@ public class ClientTCP implements Runnable{
     					return;
     				}
     				else{
+					//print out message from server
     					if(!line.equals(null)){
 	    					System.out.println("Message from the server: " + line);
 	    					out.writeBytes(line + "\n\r");
 	    					out.flush();
-    					
+    					//if the message says the answer was correct, interupt the responding thread
     						if(line.equalsIgnoreCase("correct")) {
     							//flush the output stream in the respond or stop the thread and restart it
     							respondThread.interrupt();
@@ -72,6 +78,7 @@ public class ClientTCP implements Runnable{
     		}
     }
     
+	//method for respond thread
     public void respond() {
     	    	
     	String input;
@@ -79,10 +86,10 @@ public class ClientTCP implements Runnable{
 	    	while (true) {
 	            input = scanner.nextLine();
 	            PrintWriter out;
-				
-				out = new PrintWriter(this.socket.getOutputStream(), true);
-				out.println(input);
-				out.flush();
+			//send what the client says to the server
+			out = new PrintWriter(this.socket.getOutputStream(), true);
+			out.println(input);
+			out.flush();
 	    	}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
